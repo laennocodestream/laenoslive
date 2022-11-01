@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "kmain.h": "c",
+        "definitions.h": "c",
+        "asmutils.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c",
+        "serial.h": "c"
+    }
+}
