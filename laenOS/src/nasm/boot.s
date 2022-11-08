@@ -1,6 +1,7 @@
 global _start
 global page_directory
 global page_entries
+global idt_entries
 multiboot_magic:    equ 0x1BADB002
 multiboot_flags:    equ 0x4
 multiboot_checksum: equ -(multiboot_flags + multiboot_magic)
@@ -34,4 +35,5 @@ stack_start:
 section .page nobits
 page_directory: resd 1024
 page_entries: resd 1024*1024
+idt_entries: resq 256
 

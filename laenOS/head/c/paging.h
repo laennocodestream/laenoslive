@@ -47,7 +47,7 @@ struct PageTableEntry
 typedef struct PageTableEntry PageTableEntry;
 void load_page_directory(PageDirectoryEntry* pageDirectoryEntry);
 void basic_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries);
-VramMap nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries, BootloaderInfo* bootloaderInfo);
+void nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries, BootloaderInfo* bootloaderInfo);
 void k_mmap(PageTableEntry* entries, void* virtual, void* physical, page_state destination_state);
 void setup_page_directory(PageDirectoryEntry* pageDirectory, PageTableEntry* entries);
 #endif

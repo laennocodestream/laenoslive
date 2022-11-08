@@ -1,6 +1,7 @@
 global inb
 global outb
 global load_gdt
+global load_idt
 global load_page_directory
 section .text
 inb:
@@ -50,6 +51,15 @@ gdt_loaded:
     pop ebp
     ret
 
+load_idt:
+    push ebp
+    mov ebp, esp
+    push eax
+    mov eax, [ebp + 8]
+    lidt [eax]
+    pop eax
+    pop ebp
+    ret
 section .bss
     GDT_POINTER:
         size: resw 1

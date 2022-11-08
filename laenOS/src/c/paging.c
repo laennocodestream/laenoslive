@@ -50,12 +50,11 @@ void setup_page_directory(PageDirectoryEntry* pageDirectory, PageTableEntry* ent
 }
 
 
-
-VramMap nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries, BootloaderInfo* bootloaderInfo)
+extern VramMap vram_map;
+void nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries, BootloaderInfo* bootloaderInfo)
 {
 	setup_page_directory(pageDirectory, entries);
 	uint pos;
-	VramMap vram_map;
 	for (uint i = (uint)&kernel_text_start; i < (uint)&kernel_memory_end; i += 4096){
 		k_mmap(entries, (void*) i, (void*) i, os_occupied);
 		pos = i;
@@ -90,5 +89,4 @@ VramMap nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* en
 	}
 	vram_map.size = pos - vram_map.start;
 	load_page_directory(pageDirectory);
-	return vram_map;
 }
