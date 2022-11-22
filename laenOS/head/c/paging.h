@@ -1,15 +1,26 @@
 #ifndef PAGING_H
 #define PAGING_H
-#include "definitions.h"
-#include "serial.h"
-#include "asmutils.h"
-enum page_state{
+#include <definitions.h>
+#include <asmutils.h>
+#define PAGE_PERMISSION_EXEC  1
+#define PAGE_PERMISSION_WRITE 2
+#define PAGE_PERMISSION_READ  4
+enum page_type{
 	not_mapped  = 0,
 	in_use      = 1,
 	os_occupied = 2,
-	device      = 3
+	device      = 3,
+	usable      = 4,
+	CR3         = 5
 };
-typedef enum page_state page_state;
+typedef enum page_type page_type;
+typedef struct PageState
+{
+	page_type type;
+	uint pid;
+	/* data */
+} PageState;
+
 struct PageDirectoryEntry
 {
 	uint8  present           : 1;
@@ -45,9 +56,28 @@ struct PageTableEntry
 
 
 typedef struct PageTableEntry PageTableEntry;
+
+typedef struct TransatedAddress
+{
+	void* virtual;
+	void* physical;
+}
+TransatedAddress;
+
+
 void load_page_directory(PageDirectoryEntry* pageDirectoryEntry);
 void basic_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries);
 void nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entries, BootloaderInfo* bootloaderInfo);
-void k_mmap(PageTableEntry* entries, void* virtual, void* physical, page_state destination_state);
+void k_mmap(PageTableEntry* entries, void* virtual, void* physical, PageState destination_state);
+void set_page_type(void* physical, page_type destination_state);
 void setup_page_directory(PageDirectoryEntry* pageDirectory, PageTableEntry* entries);
+int check_if_can_allocate(uint page_count);
+void k_allocate(PageTableEntry* entries, uint page_count);
+void create_page_directory(PageDirectoryEntry* pageDirectory);
+uint find_free_physical_address();
+uint find_free_virtual_address();
+void create_page_directory(PageDirectoryEntry* pageDirectory);
+void add_page_table_to_directory(PageDirectoryEntry* page, uint address);
+TransatedAddress create_new_page_directory(uint pid);
+void program_mmap(PageDirectoryEntry* directory, void* virtual, void* physical, PageState destination_state, uint permissions, uint pid);
 #endif

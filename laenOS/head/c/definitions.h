@@ -1,6 +1,8 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 #define NULL (void*)0
+#define PAGE_SIZE 4096
+#define OS_PID 0
 typedef unsigned char uint8;
 typedef unsigned int uint;
 typedef unsigned short uint16;
@@ -84,7 +86,7 @@ typedef struct GlobalDescriptorTableEntry GlobalDescriptorTableEntry;
 
 struct GlobalDescriptorTable
 {
-	GlobalDescriptorTableEntry entries[5];
+	GlobalDescriptorTableEntry entries[6];
 	/* data */
 }__attribute__((packed));
 typedef struct GlobalDescriptorTable GlobalDescriptorTable;

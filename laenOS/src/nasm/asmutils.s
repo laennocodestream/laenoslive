@@ -35,7 +35,7 @@ load_page_directory:
 load_gdt:
     push ebp
     mov ebp, esp
-    mov word [size], 5*8-1
+    mov word [size], 6*8-1
     mov eax, [ebp + 8]
     mov [offset], eax
     mov eax, GDT_POINTER

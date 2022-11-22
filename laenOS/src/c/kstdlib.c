@@ -1,4 +1,5 @@
-#include "../../head/c/kstdlib.h"
+#include <kstdlib.h>
+#include <paging.h>
 void kmemset(void* toSet, uint8 toSetTo, uint size){
 	for (uint i = 0; i < size; i++)
 	{
@@ -13,7 +14,7 @@ typedef struct MallocMeta{
 
 void kmalloc_init(){
 	MallocMeta* start = (MallocMeta*) ((void*)vram_map.start);
-	MallocMeta* end = (MallocMeta*) ((void*)(vram_map.start + vram_map.size - sizeof(MallocMeta)));
+	MallocMeta* end = (MallocMeta*) ((void*)(vram_map.start + PAGE_SIZE - sizeof(MallocMeta)));
 	start -> size = sizeof(MallocMeta);
 	start -> previous = NULL;
 	start -> next = end;
@@ -22,15 +23,36 @@ void kmalloc_init(){
 	end -> size = sizeof(MallocMeta); 
 }
 
+extern PageTableEntry page_entries[1024*1024];
+
 void* kmalloc(uint size){
 	if (size == 0)
 		return NULL;
 	MallocMeta* previous = (MallocMeta*) ((void*)vram_map.start);
 	MallocMeta* toMalloc;
-	while (size + sizeof(MallocMeta) > (uint)(previous -> next) - (uint)(previous) - previous ->size)
+	while (previous-> next == NULL || size + sizeof(MallocMeta) > (uint)(previous -> next) - (uint)(previous) - previous ->size)
 	{
 		if (previous -> next == NULL)
-			return NULL;
+		{
+			previous = previous -> previous;
+			int number_of_pages_to_allocate = size + sizeof(MallocMeta) - ((uint)(previous -> next) - (uint)(previous) - previous ->size);
+			if (number_of_pages_to_allocate % PAGE_SIZE != 0)	
+				number_of_pages_to_allocate += PAGE_SIZE;
+			number_of_pages_to_allocate /= PAGE_SIZE;
+			if (check_if_can_allocate(number_of_pages_to_allocate))
+			{
+				k_allocate(page_entries, number_of_pages_to_allocate);
+				MallocMeta* end = (MallocMeta*)((char*) previous -> next + number_of_pages_to_allocate * PAGE_SIZE);
+				end -> previous = previous;
+				end -> next = NULL;
+				end -> size = sizeof(MallocMeta); 
+				previous -> next = end;
+				return kmalloc(size);
+			}
+			else {
+				return NULL;
+			}
+		}
 		previous = (MallocMeta*) previous -> next;
 	}
 	toMalloc =(MallocMeta*)( (uint)(previous) +(uint) (previous -> size));

@@ -24,5 +24,11 @@ SECTIONS
         . = ALIGN(4K);
         *(.page)
     }
+    . = ALIGN(4K);
+    CR3_HOLDER = .;
+    . = . + 4096;
+    .program : ALIGN(4K){
+        *(.program)
+    }
     kernel_memory_end = .;
 }

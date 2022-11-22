@@ -1,6 +1,7 @@
 #ifndef KSTDLIB_H
 #define KSTDLIB_H
-#include "definitions.h"
+#include <definitions.h>
+
 void kmemset(void* toSet, uint8 toSetTo, uint size);
 extern VramMap vram_map;
 void* kmalloc(uint size);

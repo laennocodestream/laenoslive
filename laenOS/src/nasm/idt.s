@@ -1,14 +1,12 @@
+extern page_directory
+extern CR3_HOLDER
+
 %macro trap 1
 global __nasm_interrupt_%1
 __nasm_interrupt_%1:
 	extern __c_interrupt_vector
-	pushad
 	push dword %1
-	call __c_interrupt_vector
-	pop eax
-	popad
-	add esp, 4
-	iret
+	jmp __nasm_end_interrupt
 %endmacro
 
 %macro interrupt 1
@@ -16,14 +14,36 @@ global __nasm_interrupt_%1
 __nasm_interrupt_%1:
 	extern __c_interrupt_vector
 	push dword 0
-	pushad
 	push dword %1
-	call __c_interrupt_vector
-	pop eax
-	popad
-	add esp, 4
-	iret
+	jmp __nasm_end_interrupt
 %endmacro
+
+
+__nasm_end_interrupt:
+	push eax
+	mov eax, [esp + 16]
+	cmp eax, 0x8
+	je __nasm_end_interrupt_no_cr3
+	mov eax, cr3
+	mov [CR3_HOLDER], eax
+	mov eax, page_directory
+	mov cr3, eax
+	pop eax
+	pushad
+	call __c_interrupt_vector
+	mov eax, [CR3_HOLDER]
+	mov cr3, eax
+	popad
+	add esp, 8
+	iret
+
+__nasm_end_interrupt_no_cr3:
+	pop eax
+	pushad
+	call __c_interrupt_vector
+	popad
+	add esp, 8
+	iret
 
 interrupt 0
 interrupt 1

@@ -1,6 +1,6 @@
 #ifndef IDT_H
 #define IDT_H
-#include "definitions.h"
+#include <definitions.h>
 #define INTERRUPT_GATE_TYPE 0xE
 #define TRAP_GATE_TYPE      0xF
 struct IdtGateDescriptor

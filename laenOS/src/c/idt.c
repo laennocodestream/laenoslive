@@ -1,5 +1,5 @@
-#include "../../head/c/idt.h"
-#include "../../head/c/serial.h"
+#include <idt.h>
+#include <serial.h>
 extern Serial com1;
 void load_idt(IdtPointer* idtPointer);
 #define LOAD_INTERRUPT(x, entries) int __nasm_interrupt_##x();\
@@ -21,7 +21,7 @@ void load_idt(IdtPointer* idtPointer);
 	entries[x].offset_low = (uint)(&__nasm_interrupt_##x) & 0xFFFF;\
 	entries[x].offset_high = (uint)(&__nasm_interrupt_##x) >> 16 ;
 
-void __c_interrupt_vector(uint interruptCode,uint edi, uint esi, uint ebp, uint esp, uint ebx, uint edx, uint ecx, uint eax, uint error_code)
+void __c_interrupt_vector(uint edi, uint esi, uint ebp, uint esp, uint ebx, uint edx, uint ecx, uint eax, uint interruptCode, uint error_code)
 {
 	Serial_writeStr(&com1, "[debug] interruption called \0");
 	Serial_writeHex32(&com1, interruptCode);
@@ -287,7 +287,7 @@ void make_and_load_idt(IdtGateDescriptor* entries, IdtPointer* idtPointer){
 	LOAD_INTERRUPT(255, entries)
 	idtPointer -> entries_size = 0x7ff;
 	idtPointer -> entry_pos = entries;
-	Serial_writeHex32(&com1,entries);
+	Serial_writeHex32(&com1,(uint)entries);
 	Serial_writeStr(&com1, " end entries\n\0");
 	load_idt(idtPointer);
 }

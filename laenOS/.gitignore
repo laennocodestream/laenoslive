@@ -2,4 +2,4 @@ kdump
 os.iso
 test
 bin
-iso/kernel
+iso/boot/kernel

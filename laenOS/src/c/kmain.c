@@ -1,10 +1,11 @@
-#include "../../head/c/kmain.h"
-#include "../../head/c/serial.h"
-#include "../../head/c/definitions.h"
-#include "../../head/c/kstdlib.h"
-#include "../../head/c/gdt.h"
-#include "../../head/c/paging.h"
-#include "../../head/c/idt.h"
+#include <kmain.h>
+#include <serial.h>
+#include <definitions.h>
+#include <kstdlib.h>
+#include <gdt.h>
+#include <paging.h>
+#include <idt.h>
+#include <elf_reader.h>
 BootloaderInfo* bootloaderInfo;
 GlobalDescriptorTable gdt;
 IdtPointer idtPointer;
@@ -13,6 +14,7 @@ extern PageDirectoryEntry page_directory[1024];
 Serial com1;
 extern PageTableEntry page_entries[1024*1024];
 extern IdtGateDescriptor idt_entries[256];
+extern ElfHeader32Bits program_start;
 void kmain(BootloaderInfo* info){
 	bootloaderInfo = info;
 	GDT_Init(&gdt);
@@ -28,18 +30,9 @@ void kmain(BootloaderInfo* info){
 	Serial_writeStr(&com1, "|\0");
 	Serial_writeHex32(&com1, vram_map.size);
 	Serial_writeStr(&com1, "\n\0");
-	__asm__("int $0x80");
-	char charset[] = "abcdefghijklmnopqrstuvwxyz\n";
-	char* ptr1;
-	ptr1 = kmalloc(1000);
-	/*Serial_writeHex32(&com1, ptr1);
-	Serial_writeStr(&com1, "\n\0");
-	char* ptr2;
-	ptr2 = kmalloc(1000);
-	kfree(ptr1);
-	ptr1 = kmalloc(1001);
-	Serial_writeHex32(&com1, ptr1);
-	Serial_writeStr(&com1, "\n\0");*/
+	Serial_printElfHeader32Bits(&com1, &program_start);
+	map_program(&program_start);
+	//asm("int $0x80");
 	while (1)
 	{
 	}

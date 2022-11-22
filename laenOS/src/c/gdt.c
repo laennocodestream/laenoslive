@@ -1,7 +1,7 @@
-#include "../../head/c/asmutils.h"
-#include "../../head/c/definitions.h"
-#include "../../head/c/kstdlib.h"
-#include "../../head/c/gdt.h"
+#include <asmutils.h>
+#include <definitions.h>
+#include <kstdlib.h>
+#include <gdt.h>
 void GDT_Init(GlobalDescriptorTable* gdt){
 	kmemset(gdt, 0, sizeof(GlobalDescriptorTable));
 	gdt->entries[1].base_low_low = 0;//this is ring0 code segment
@@ -64,5 +64,19 @@ void GDT_Init(GlobalDescriptorTable* gdt){
 	gdt->entries[4].access_byte.ReadWrite = 1;
 	gdt->entries[4].access_byte.S = 1;
 	
+	gdt->entries[5].base_low_low = 0;//this is ring0 code segment for programs
+	gdt->entries[5].base_high_low = 0;
+	gdt->entries[5].base_high_high = 0;
+	gdt->entries[5].limit_low = 0xFFFF;
+	gdt->entries[5].flags_and_high_limit.Limit = 0xF;
+	gdt->entries[5].flags_and_high_limit.Granularity = 1;
+	gdt->entries[5].flags_and_high_limit.DB = 1;
+	gdt->entries[5].flags_and_high_limit.LongMode = 0;
+	gdt->entries[5].access_byte.DirectionConforming = 0;
+	gdt->entries[5].access_byte.Executable = 1;
+	gdt->entries[5].access_byte.Present = 1;
+	gdt->entries[5].access_byte.ProtectionLevel = 0;
+	gdt->entries[5].access_byte.ReadWrite = 1;
+	gdt->entries[5].access_byte.S = 1;
 	load_gdt(gdt);
 }
