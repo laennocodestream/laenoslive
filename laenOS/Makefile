@@ -32,6 +32,7 @@ bin/nasm/idt.o: src/nasm/idt.s
 
 bin/nasm/program.o: src/nasm/program.s programs/program_tout_con
 	nasm ${NASMFLAG32BIT} src/nasm/program.s -o bin/nasm/program.o
-
+programs/program_tout_con: programs/program_tout_con.c
+	make -C programs -B
 debug: os.iso
 	qemu-system-i386 -cdrom os.iso -m 256M -serial stdio -s -S -d int

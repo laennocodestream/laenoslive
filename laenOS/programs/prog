@@ -1,0 +1,139 @@
+
+program_tout_con:     file format elf32-i386
+
+
+Disassembly of section .note.gnu.build-id:
+
+080480f4 <.note.gnu.build-id>:
+ 80480f4:	04 00                	add    $0x0,%al
+ 80480f6:	00 00                	add    %al,(%eax)
+ 80480f8:	14 00                	adc    $0x0,%al
+ 80480fa:	00 00                	add    %al,(%eax)
+ 80480fc:	03 00                	add    (%eax),%eax
+ 80480fe:	00 00                	add    %al,(%eax)
+ 8048100:	47                   	inc    %edi
+ 8048101:	4e                   	dec    %esi
+ 8048102:	55                   	push   %ebp
+ 8048103:	00 80 76 49 4c cf    	add    %al,-0x30b3b68a(%eax)
+ 8048109:	5a                   	pop    %edx
+ 804810a:	61                   	popa   
+ 804810b:	51                   	push   %ecx
+ 804810c:	a6                   	cmpsb  %es:(%edi),%ds:(%esi)
+ 804810d:	f7 84 5b d3 6c 06 5a 	testl  $0x353ce58c,0x5a066cd3(%ebx,%ebx,2)
+ 8048114:	8c e5 3c 35 
+
+Disassembly of section .text:
+
+08049000 <interrupt>:
+ 8049000:	55                   	push   %ebp
+ 8049001:	89 e5                	mov    %esp,%ebp
+ 8049003:	e8 1f 00 00 00       	call   8049027 <__x86.get_pc_thunk.ax>
+ 8049008:	05 f8 2f 00 00       	add    $0x2ff8,%eax
+ 804900d:	cd 70                	int    $0x70
+ 804900f:	90                   	nop
+ 8049010:	5d                   	pop    %ebp
+ 8049011:	c3                   	ret    
+
+08049012 <_start>:
+ 8049012:	55                   	push   %ebp
+ 8049013:	89 e5                	mov    %esp,%ebp
+ 8049015:	e8 0d 00 00 00       	call   8049027 <__x86.get_pc_thunk.ax>
+ 804901a:	05 e6 2f 00 00       	add    $0x2fe6,%eax
+ 804901f:	e8 dc ff ff ff       	call   8049000 <interrupt>
+ 8049024:	90                   	nop
+ 8049025:	5d                   	pop    %ebp
+ 8049026:	c3                   	ret    
+
+08049027 <__x86.get_pc_thunk.ax>:
+ 8049027:	8b 04 24             	mov    (%esp),%eax
+ 804902a:	c3                   	ret    
+
+Disassembly of section .eh_frame:
+
+0804a000 <.eh_frame>:
+ 804a000:	14 00                	adc    $0x0,%al
+ 804a002:	00 00                	add    %al,(%eax)
+ 804a004:	00 00                	add    %al,(%eax)
+ 804a006:	00 00                	add    %al,(%eax)
+ 804a008:	01 7a 52             	add    %edi,0x52(%edx)
+ 804a00b:	00 01                	add    %al,(%ecx)
+ 804a00d:	7c 08                	jl     804a017 <__x86.get_pc_thunk.ax+0xff0>
+ 804a00f:	01 1b                	add    %ebx,(%ebx)
+ 804a011:	0c 04                	or     $0x4,%al
+ 804a013:	04 88                	add    $0x88,%al
+ 804a015:	01 00                	add    %eax,(%eax)
+ 804a017:	00 1c 00             	add    %bl,(%eax,%eax,1)
+ 804a01a:	00 00                	add    %al,(%eax)
+ 804a01c:	1c 00                	sbb    $0x0,%al
+ 804a01e:	00 00                	add    %al,(%eax)
+ 804a020:	e0 ef                	loopne 804a011 <__x86.get_pc_thunk.ax+0xfea>
+ 804a022:	ff                   	(bad)  
+ 804a023:	ff 12                	call   *(%edx)
+ 804a025:	00 00                	add    %al,(%eax)
+ 804a027:	00 00                	add    %al,(%eax)
+ 804a029:	41                   	inc    %ecx
+ 804a02a:	0e                   	push   %cs
+ 804a02b:	08 85 02 42 0d 05    	or     %al,0x50d4202(%ebp)
+ 804a031:	4e                   	dec    %esi
+ 804a032:	c5 0c 04             	lds    (%esp,%eax,1),%ecx
+ 804a035:	04 00                	add    $0x0,%al
+ 804a037:	00 1c 00             	add    %bl,(%eax,%eax,1)
+ 804a03a:	00 00                	add    %al,(%eax)
+ 804a03c:	3c 00                	cmp    $0x0,%al
+ 804a03e:	00 00                	add    %al,(%eax)
+ 804a040:	d2 ef                	shr    %cl,%bh
+ 804a042:	ff                   	(bad)  
+ 804a043:	ff 15 00 00 00 00    	call   *0x0
+ 804a049:	41                   	inc    %ecx
+ 804a04a:	0e                   	push   %cs
+ 804a04b:	08 85 02 42 0d 05    	or     %al,0x50d4202(%ebp)
+ 804a051:	51                   	push   %ecx
+ 804a052:	c5 0c 04             	lds    (%esp,%eax,1),%ecx
+ 804a055:	04 00                	add    $0x0,%al
+ 804a057:	00 10                	add    %dl,(%eax)
+ 804a059:	00 00                	add    %al,(%eax)
+ 804a05b:	00 5c 00 00          	add    %bl,0x0(%eax,%eax,1)
+ 804a05f:	00 c7                	add    %al,%bh
+ 804a061:	ef                   	out    %eax,(%dx)
+ 804a062:	ff                   	(bad)  
+ 804a063:	ff 04 00             	incl   (%eax,%eax,1)
+ 804a066:	00 00                	add    %al,(%eax)
+ 804a068:	00 00                	add    %al,(%eax)
+	...
+
+Disassembly of section .got.plt:
+
+0804c000 <_GLOBAL_OFFSET_TABLE_>:
+	...
+
+Disassembly of section .data:
+
+0804c00c <truc>:
+ 804c00c:	74 72                	je     804c080 <bidule+0x60>
+ 804c00e:	75 63                	jne    804c073 <bidule+0x53>
+	...
+
+Disassembly of section .bss:
+
+0804c020 <bidule>:
+	...
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	47                   	inc    %edi
+   1:	43                   	inc    %ebx
+   2:	43                   	inc    %ebx
+   3:	3a 20                	cmp    (%eax),%ah
+   5:	28 44 65 62          	sub    %al,0x62(%ebp,%eiz,2)
+   9:	69 61 6e 20 31 30 2e 	imul   $0x2e303120,0x6e(%ecx),%esp
+  10:	32 2e                	xor    (%esi),%ch
+  12:	31 2d 36 29 20 31    	xor    %ebp,0x31202936
+  18:	30 2e                	xor    %ch,(%esi)
+  1a:	32 2e                	xor    (%esi),%ch
+  1c:	31 20                	xor    %esp,(%eax)
+  1e:	32 30                	xor    (%eax),%dh
+  20:	32 31                	xor    (%ecx),%dh
+  22:	30 31                	xor    %dh,(%ecx)
+  24:	31 30                	xor    %esi,(%eax)
+	...

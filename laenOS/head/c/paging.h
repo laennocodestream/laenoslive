@@ -11,7 +11,8 @@ enum page_type{
 	os_occupied = 2,
 	device      = 3,
 	usable      = 4,
-	CR3         = 5
+	CR3         = 5,
+	unusable    = 6
 };
 typedef enum page_type page_type;
 typedef struct PageState
@@ -80,4 +81,6 @@ void create_page_directory(PageDirectoryEntry* pageDirectory);
 void add_page_table_to_directory(PageDirectoryEntry* page, uint address);
 TransatedAddress create_new_page_directory(uint pid);
 void program_mmap(PageDirectoryEntry* directory, void* virtual, void* physical, PageState destination_state, uint permissions, uint pid);
+void* find_virtual_address_for_kernel(void* physical);
+void* get_physical_from_virtual_in_directory(PageDirectoryEntry* pageDirectory, void* virtual);
 #endif

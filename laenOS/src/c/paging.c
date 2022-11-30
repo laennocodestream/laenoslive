@@ -80,6 +80,23 @@ TransatedAddress create_new_page_directory(uint pid){
 	return to_return;
 }
 
+void* find_virtual_address_for_kernel(void* physical){
+	extern PageTableEntry page_entries[1024*1024];
+	uint physical_shrinked = (uint)(physical) - ((uint) (physical) % 4096);
+	for (uint i = 0; i < 1024 * 1024; i++)
+	{
+		if (page_entries[i].present)
+		{
+			//TODO conversion function
+			if ((page_entries[i].address_low << 12) + (page_entries[i].address_high << 16) == physical_shrinked)
+			{
+				return (void*) (i * 4096 + ((uint) (physical) % 4096));
+			}
+		}
+	}
+	return NULL;
+}
+
 void program_mmap(PageDirectoryEntry* directory, void* virtual, void* physical, PageState destination_state, uint permissions, uint pid)
 {
 	extern PageTableEntry page_entries[1024*1024];
@@ -87,6 +104,7 @@ void program_mmap(PageDirectoryEntry* directory, void* virtual, void* physical, 
 	uint directory_index = ((uint) virtual) >> 22;
 	uint virtual_index  = (((uint) virtual ) >> 12) % 1024;
 	uint physical_index = ((uint) physical) >> 12; 
+	//add a pagetable to the directory if none is where it's needed
 	if (directory[directory_index].present != 1){
 		uint virtual_page_table_address = find_free_virtual_address();
 		uint physical_page_table_address = find_free_physical_address(); // TODO ADD MEMORY CHECKS 
@@ -100,8 +118,14 @@ void program_mmap(PageDirectoryEntry* directory, void* virtual, void* physical, 
 	if ((uint) physical == 0)
 	{
 		physical_index = find_free_physical_address() >> 12;
+		uint kernel_virtual_index = find_free_virtual_address() >> 12;
+		PageState state;
+		state.pid = pid;
+		state.type = in_use;
+		k_mmap(page_entries, (void*)(kernel_virtual_index << 12),(void*)(physical_index << 12), state);
 	}
-	PageTableEntry* entry = (PageTableEntry*)(virtual_index + (((uint) directory[directory_index].address_high) << 16 + ((uint) directory[directory_index].address_low) << 12));
+	uint physical_entry = virtual_index + ((uint) directory[directory_index].address_high) << 16 + ((uint) directory[directory_index].address_low) << 12;
+	PageTableEntry* entry = (PageTableEntry*) find_virtual_address_for_kernel((void*)physical_entry);
 	// TODO add checks that makes this fail if physical state is already used
 	physical_state [physical_index] = destination_state;
 	entry -> user_supervision     = 1;
@@ -144,6 +168,17 @@ void setup_page_directory(PageDirectoryEntry* pageDirectory, PageTableEntry* ent
 	{
 		add_page_table_to_directory(pageDirectory + i, (long)(entries + 1024 * i));
 	}
+}
+
+void* get_physical_from_virtual_in_directory(PageDirectoryEntry* pageDirectory, void* virtual)
+{
+	uint directory_index = (uint) virtual >> 22;
+	uint pagetable_index = ((uint) virtual >> 12) % 1024;
+	void* physical_pagetable_address = (pageDirectory[directory_index].address_low << 12) + (pageDirectory[directory_index].address_high << 16);
+	PageTableEntry* virtual_pagetable_address = find_virtual_address_for_kernel(physical_pagetable_address);
+	void* page_address = (virtual_pagetable_address[pagetable_index].address_low << 12) + (virtual_pagetable_address[pagetable_index].address_high << 16);
+	return (void*)(((uint)page_address) + ((uint)virtual) % 4096);
+
 }
 
 
@@ -198,6 +233,10 @@ void nicer_paging_setup(PageDirectoryEntry* pageDirectory, PageTableEntry* entri
 		entry = (BootloaderMapEntry*)(((char*)entry) + entry -> this_size + 4);
 	}
 	vram_map.size = pos - vram_map.start;
+	//lock BDA and EBDA
+	set_page_type(0, unusable);
+	for (uint i = 0x00080000; i < 0x0009FFFF; i += 4096)
+		set_page_type((void*) i, unusable);
 	set_page_type((void*)&CR3_HOLDER, CR3);
 	load_page_directory(pageDirectory);
 }
